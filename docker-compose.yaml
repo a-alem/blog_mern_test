@@ -1,0 +1,34 @@
+services:
+  mongodb:
+    image: mongo:8.0.9
+    restart: always
+    volumes:
+      - mongodb_volume:/data/db
+    ports:
+      - "27017:27017" # Used for debugging on the host machine.
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root # This is added here for testing only, in production systems, this must not be passed to version control and instead retrieved dynamically from a secrets vault in a secure way.
+      MONGO_INITDB_ROOT_PASSWORD: example # This is added here for testing only, in production systems, this must not be passed to version control and instead retrieved dynamically from a secrets vault in a secure way.
+  backend:
+    build:
+      context: .
+      dockerfile: docker/backend/Dockerfile
+    ports:
+      - "5050:5050"
+    restart: always
+    volumes: # TODO: Only used in dev, remove when finished
+      - ./backend:/app # TODO: Only used in dev, remove when finished
+  frontend:
+    build:
+      context: .
+      dockerfile: docker/frontend/Dockerfile
+    ports:
+      - "3000:3000"
+    restart: always
+    volumes: # TODO: Only used in dev, remove when finished
+      - ./frontend:/app # TODO: Only used in dev, remove when finished
+      - /app/node_modules # TODO: Only used in dev, remove when finished
+    environment: # TODO: Only used in dev, remove when finished
+      - CHOKIDAR_USEPOLLING=true # TODO: Only used in dev, remove when finished
+volumes:
+  mongodb_volume:
