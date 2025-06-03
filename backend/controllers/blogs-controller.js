@@ -1,4 +1,5 @@
 const HttpError = require("../models/http-error");
+const { validationResult } = require("express-validator");
 
 const DUMMY_BLOGS = [
     {
@@ -58,13 +59,41 @@ const getBlogsByUserId = (req, res, next) => {
 }
 
 const postBlog = (req, res, next) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        return next(new HttpError('Invalid input, please check your data', 422));
+    }
+
     const {title, content} = req.body;
     // Do something in DB
     res.status(201) // TODO: return the created blog here
+}
 
+const updateBlog = (req, res, next) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        return next(new HttpError('Invalid input, please check your data', 422));
+    }
+
+    const {title, content} = req.body;
+    const blogId = req.params.blogId;
+
+    // Do DB logic
+
+    res.status(200)
+}
+
+const deleteBlog = (req, res, next) => {
+    const blogId = req.params.blogId;
+
+    // Do DB logic
+
+    res.status(200)
 }
 
 exports.getBlogs = getBlogs;
 exports.getBlogById = getBlogById;
 exports.getBlogsByUserId = getBlogsByUserId;
 exports.postBlog = postBlog;
+exports.updateBlog = updateBlog;
+exports.deleteBlog = deleteBlog;
